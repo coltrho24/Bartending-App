@@ -5,29 +5,27 @@ import requests
 from io import BytesIO
 
 #connect to the database
-conn = sqlite3.connect(r'C:\Program Files\SQLiteStudio\Drinks.db')
+conn = sqlite3.connect(r'C:\Users\colto\Desktop\Bartending\Bartending-App\Drinks.db')
 c = conn.cursor()
 
-#Get user input for the ingredient
-ingredient = input("Enter and ingredient: ").lower()
+#Get user input for multiple ingredient
+ingredients_input = input("Enter each ingredient seperated by a comma: ").lower()
+ingredients = [ing.strip() for ing in ingredients_input.split(',')]
 
-#SQL query to select both the recipe name (column2) and the image file path (column7)
+# Dynamically construct the SQL query to search for all ingredients
 query = """
 SELECT column2, column7
 FROM Drinks
-WHERE column10 LIKE ?
-   OR column11 LIKE ?
-   OR column12 LIKE ?
-   OR column13 LIKE ?
-   OR column14 LIKE ?
-   OR column15 LIKE ?
-   OR column16 LIKE ?
-   OR column17 LIKE ?
-   OR column18 LIKE ?
-"""
+WHERE """ + " OR ".join(
+    [f"(column10 LIKE ? OR column11 LIKE ? OR column12 LIKE ? OR column13 LIKE ? OR column14 LIKE ? OR column15 LIKE ? OR column16 LIKE ? OR column17 LIKE ? OR column18 LIKE ?)"
+    for _ in ingredients])
 
-#Parameters for the query (searching for the ingredient in multiple columns)
-params = ('%' + ingredient  + '%',) * 9
+#prepare the parameters (for each ingredient, we need 9 placeholders)
+params = []
+for ingredient in ingredients:
+    params.extend(['%' + ingredient  + '%'] * 9)
+
+#execture the query with the parameters
 c.execute(query, params)
 
 #Fetch all matching results
