@@ -14,7 +14,7 @@ ingredients = [ing.strip() for ing in ingredients_input.split(',')]
 
 # Dynamically construct the SQL query to search for all ingredients
 query = """
-SELECT column2, column7
+SELECT column2, column7, column10,column11,column12,column13,column14,column15,column16,column17,column18, column19, column20,column21,column22,column23,column24,column25,column26,column27,column28
 FROM Drinks
 WHERE """ + " OR ".join(
     [f"(column10 LIKE ? OR column11 LIKE ? OR column12 LIKE ? OR column13 LIKE ? OR column14 LIKE ? OR column15 LIKE ? OR column16 LIKE ? OR column17 LIKE ? OR column18 LIKE ?)"
@@ -35,10 +35,16 @@ drinks = c.fetchall()
 if drinks:
     print("Drinks that include", ingredient + ":")
     for recipe in drinks:
-        drink_name = recipe[0]
+        drink_name = recipe[0]        
         image_path = recipe[1] #This should be the file path from column7
-        
-        print(drink_name) #print the drink name
+        gredients = recipe[2:10]
+        instructions = recipe[11] #This should output the instructions
+        measures = recipe[12:20] #this should hopefully output all the measurements
+
+        print(f"\n{drink_name}") #print the drink name
+        print(gredients)
+        print(measures)
+        print(instructions)
 
         #try to open image and display it
         if image_path.startswith('http://') or image_path.startswith('https://'):
